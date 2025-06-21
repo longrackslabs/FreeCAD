@@ -421,19 +421,26 @@ private:
 
     static HintTable getArcOfEllipseHintTable();
     static std::list<Gui::InputHint> lookupArcOfEllipseHints(int mode);
+    static Gui::InputHint cancelArcOfEllipseHint();
 };
 
 DrawSketchHandlerArcOfEllipse::HintTable DrawSketchHandlerArcOfEllipse::getArcOfEllipseHintTable()
 {
-    return {// Structure: {mode, {hints...}}
-            {STATUS_SEEK_First,
-             {{QObject::tr("%1 pick ellipse center"), {Gui::InputHint::UserInput::MouseLeft}}}},
-            {STATUS_SEEK_Second,
-             {{QObject::tr("%1 pick axis point"), {Gui::InputHint::UserInput::MouseLeft}}}},
-            {STATUS_SEEK_Third,
-             {{QObject::tr("%1 pick arc start point"), {Gui::InputHint::UserInput::MouseLeft}}}},
-            {STATUS_SEEK_Fourth,
-             {{QObject::tr("%1 pick arc end point"), {Gui::InputHint::UserInput::MouseLeft}}}}};
+    const auto cancelHint = cancelArcOfEllipseHint();
+
+    return {
+        // Structure: {mode, {hints...}}
+        {STATUS_SEEK_First,
+         {{QObject::tr("%1 pick ellipse center"), {Gui::InputHint::UserInput::MouseLeft}},
+          cancelHint}},
+        {STATUS_SEEK_Second,
+         {{QObject::tr("%1 pick axis point"), {Gui::InputHint::UserInput::MouseLeft}}, cancelHint}},
+        {STATUS_SEEK_Third,
+         {{QObject::tr("%1 pick arc start point"), {Gui::InputHint::UserInput::MouseLeft}},
+          cancelHint}},
+        {STATUS_SEEK_Fourth,
+         {{QObject::tr("%1 pick arc end point"), {Gui::InputHint::UserInput::MouseLeft}},
+          cancelHint}}};
 }
 
 std::list<Gui::InputHint> DrawSketchHandlerArcOfEllipse::lookupArcOfEllipseHints(int mode)
@@ -447,6 +454,12 @@ std::list<Gui::InputHint> DrawSketchHandlerArcOfEllipse::lookupArcOfEllipseHints
                            });
 
     return (it != arcOfEllipseHintTable.end()) ? it->hints : std::list<Gui::InputHint> {};
+}
+
+Gui::InputHint DrawSketchHandlerArcOfEllipse::cancelArcOfEllipseHint()
+{
+    return {QObject::tr("%1 cancel", "Sketcher Arc of Ellipse: hint"),
+            {Gui::InputHint::UserInput::MouseRight}};
 }
 
 }  // namespace SketcherGui
