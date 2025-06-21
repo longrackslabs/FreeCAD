@@ -429,20 +429,33 @@ private:
 
     static HintTable getArcOfHyperbolaHintTable();
     static std::list<Gui::InputHint> lookupArcOfHyperbolaHints(int mode);
+    static Gui::InputHint cancelArcOfHyperbolaHint();
 };
+
+Gui::InputHint DrawSketchHandlerArcOfHyperbola::cancelArcOfHyperbolaHint()
+{
+    return {QObject::tr("%1 cancel", "Sketcher Arc of Hyperbola: hint"),
+            {Gui::InputHint::UserInput::MouseRight}};
+}
 
 DrawSketchHandlerArcOfHyperbola::HintTable
 DrawSketchHandlerArcOfHyperbola::getArcOfHyperbolaHintTable()
 {
-    return {// Structure: {mode, {hints...}}
-            {STATUS_SEEK_First,
-             {{QObject::tr("%1 pick center point"), {Gui::InputHint::UserInput::MouseLeft}}}},
-            {STATUS_SEEK_Second,
-             {{QObject::tr("%1 pick axis point"), {Gui::InputHint::UserInput::MouseLeft}}}},
-            {STATUS_SEEK_Third,
-             {{QObject::tr("%1 pick arc start point"), {Gui::InputHint::UserInput::MouseLeft}}}},
-            {STATUS_SEEK_Fourth,
-             {{QObject::tr("%1 pick arc end point"), {Gui::InputHint::UserInput::MouseLeft}}}}};
+    const auto cancelHint = cancelArcOfHyperbolaHint();
+
+    return {
+        // Structure: {mode, {hints...}}
+        {STATUS_SEEK_First,
+         {{QObject::tr("%1 pick center point"), {Gui::InputHint::UserInput::MouseLeft}},
+          cancelHint}},
+        {STATUS_SEEK_Second,
+         {{QObject::tr("%1 pick axis point"), {Gui::InputHint::UserInput::MouseLeft}}, cancelHint}},
+        {STATUS_SEEK_Third,
+         {{QObject::tr("%1 pick arc start point"), {Gui::InputHint::UserInput::MouseLeft}},
+          cancelHint}},
+        {STATUS_SEEK_Fourth,
+         {{QObject::tr("%1 pick arc end point"), {Gui::InputHint::UserInput::MouseLeft}},
+          cancelHint}}};
 }
 
 std::list<Gui::InputHint> DrawSketchHandlerArcOfHyperbola::lookupArcOfHyperbolaHints(int mode)
